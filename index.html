@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>Demo for ngClassCallback</title>
+  <script src="https://code.angularjs.org/1.4.8/angular.min.js"></script>
+  <script src="https://code.angularjs.org/1.4.8/angular-animate.min.js"></script>
+  <script>
+    var timeStart;
+
+    angular.module('app', ['ngAnimate'])
+
+    .controller('controller', function Controller() {
+      var cx = this;
+      cx.active = false;
+      cx.log = log;
+      function log(event, phase) {
+        console.log(event, phase);
+        // Measure animation time
+        if (phase === 'start') {
+          timeStart = window.performance.now();
+        }
+        if (phase === 'close') {
+          var duration = window.performance.now() - timeStart;
+          console.log(duration.toFixed(0),'ms');
+        }
+      }
+    });
+  </script>
+  <script src="ngClassCallback.directive.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,500" rel="stylesheet" type="text/css">
+  <style>
+    /*Some basic styles to get us through this simple example*/
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: Roboto, sans-serif;
+      font-weight: 400;
+    }
+    h1 {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+
+      line-height: 32px;
+      margin: 0;
+
+      font-size: 20px;
+      transition: background 4s, font-size 6s;
+    }
+    .highlighted {
+      background: yellow;
+    }
+    .bigtype {
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body ng-controller="controller as cx">
+  <h1 ng-class="{highlighted: cx.active, bigtype: !cx.active}"
+      ng-class-callback="cx.log($event, $phase)"
+      ng-click="cx.active=!cx.active">
+    Click me!
+  </h1>
+</body>
+
+</html>
